@@ -3,51 +3,22 @@
 
 ## Usage
 ```java
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-public class ClassSearchManager {
+public class MainClassSearchApp {
 
-    public static List<Class<?>> getClassesWithKeyword(String packageName, String keyword, SearchType searchType) {
-        List<Class<?>> matchingClasses = new ArrayList<>();
-        try {
-            String path = packageName.replace('.', '/');
-            File packageDir = new File(ClassLoader.getSystemClassLoader().getResource(path).getFile());
-            File[] files = packageDir.listFiles();
-            if (files != null) {
-                for (File file : files) {
-                    if (file.isFile() && file.getName().endsWith(".class")) {
-                        String className = packageName + "." + file.getName().replace(".class", "");
-                        if (isClassMatchingKeyword(className, keyword, searchType)) {
-                            Class<?> clazz = Class.forName(className);
-                            matchingClasses.add(clazz);
-                        }
-                    }
-                }
-            }
-        } catch (ClassNotFoundException | IOException e) {
-            e.printStackTrace();
-        }
-        return matchingClasses;
-    }
+    public static void main(String[] args) {
+        String packageName = "your.package.name"; // Değiştirilmesi gereken paket adı
+        String keyword = "YourKeyword"; // Değiştirilmesi gereken anahtar kelime
 
-    private static boolean isClassMatchingKeyword(String className, String keyword, SearchType searchType) {
-        switch (searchType) {
-            case STARTSWITH:
-                return className.startsWith(keyword);
-            case CONTAINS:
-                return className.contains(keyword);
-            case ENDSWITH:
-                return className.endsWith(keyword);
-            default:
-                return false;
-        }
-    }
+        List<Class<?>> startsWithClasses = ClassSearchManager.getClassesWithKeyword(packageName, keyword, ClassSearchManager.SearchType.STARTSWITH);
+        System.out.println("Classes starting with " + keyword + ": " + startsWithClasses);
 
-    public enum SearchType {
-        STARTSWITH, CONTAINS, ENDSWITH
+        List<Class<?>> containsClasses = ClassSearchManager.getClassesWithKeyword(packageName, keyword, ClassSearchManager.SearchType.CONTAINS);
+        System.out.println("Classes containing " + keyword + ": " + containsClasses);
+
+        List<Class<?>> endsWithClasses = ClassSearchManager.getClassesWithKeyword(packageName, keyword, ClassSearchManager.SearchType.ENDSWITH);
+        System.out.println("Classes ending with " + keyword + ": " + endsWithClasses);
     }
 }
 ```
